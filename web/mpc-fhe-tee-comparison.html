@@ -1,0 +1,264 @@
+<title>MPC vs FHE vs TEE</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --paper: #f6f4ef;
+    --paper-2: #eeece4;
+    --ink: #1e2420;
+    --ink-dim: #4c554d;
+    --ink-faint: #838d84;
+    --line: #d8d3c6;
+    --accent: #a6672b;
+    --accent-soft: #f1e2d0;
+    --win: #2f6b52;
+    --win-soft: #e3ede7;
+    --font-display: "Source Serif 4", Georgia, serif;
+    --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #171613;
+      --paper-2: #1e1c17;
+      --ink: #ece8de;
+      --ink-dim: #b4ad9d;
+      --ink-faint: #837b6c;
+      --line: #37342a;
+      --accent: #d99a5b;
+      --accent-soft: #3a2a17;
+      --win: #6fbd97;
+      --win-soft: #1c2b23;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #171613;
+    --paper-2: #1e1c17;
+    --ink: #ece8de;
+    --ink-dim: #b4ad9d;
+    --ink-faint: #837b6c;
+    --line: #37342a;
+    --accent: #d99a5b;
+    --accent-soft: #3a2a17;
+    --win: #6fbd97;
+    --win-soft: #1c2b23;
+  }
+
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    padding-inline: 16px;
+  }
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding-block: clamp(28px, 6vw, 64px);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    line-height: 1.15;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.4rem;
+    margin: 0 0 10px;
+  }
+  .dek { font-size: 16.5px; color: var(--ink-dim); max-width: 640px; margin: 0 0 6px; }
+  .source {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .source a { color: var(--accent); text-decoration: none; }
+  .source a:hover { text-decoration: underline; }
+
+  section { margin-top: 44px; }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--paper-2); }
+  table { border-collapse: collapse; width: 100%; min-width: 720px; }
+  caption { caption-side: top; text-align: left; padding: 14px 18px 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); }
+  th, td { text-align: left; padding: 14px 18px; vertical-align: top; border-bottom: 1px solid var(--line); font-size: 14px; }
+  thead th {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--line);
+  }
+  tbody th {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    width: 130px;
+    white-space: nowrap;
+  }
+  td { color: var(--ink-dim); }
+  td b, td strong { color: var(--ink); font-weight: 600; }
+  tr:last-child th, tr:last-child td { border-bottom: none; }
+
+  .col-tee { background: var(--win-soft); }
+  thead .col-tee { color: var(--win); }
+  .badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--win);
+    color: var(--paper-2);
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .verdict-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+  @media (max-width: 680px) { .verdict-grid { grid-template-columns: 1fr; } }
+  .vcard { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; background: var(--paper-2); }
+  .vcard.win { border-color: var(--win); background: var(--win-soft); }
+  .vcard h3 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 8px; color: var(--ink-faint); }
+  .vcard.win h3 { color: var(--win); }
+  .vcard p { margin: 0; font-size: 13.5px; font-style: italic; color: var(--ink-dim); }
+  .vcard.win p { color: var(--ink); }
+
+  blockquote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+    line-height: 1.5;
+    color: var(--ink);
+    border-left: 3px solid var(--accent);
+    margin: 22px 0 0;
+    padding-left: 20px;
+    text-wrap: balance;
+  }
+  .attrib { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); margin-top: 10px; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.03em;
+  }
+</style>
+
+<div class="page">
+  <div class="eyebrow">Reference · condensed from a Stellar Foundation blog post</div>
+  <h1>Three ways to hide a trade: MPC, FHE, and TEE compared</h1>
+  <p class="dek">A working comparison of the three cryptographic approaches to building a private ("dark pool") matching engine, and why Trusted Execution Environments come out ahead for production use today.</p>
+  <div class="source">Source: Yan Michalevsky (co-founder &amp; CTO, Anjuna Security) — <a href="https://stellar.org/blog/developers/building-a-dark-pool-on-stellar-mpc-fhe-and-tees-compared" target="_blank" rel="noopener">"Building a Dark Pool on Stellar: MPC, FHE, and TEEs Compared"</a>, Stellar.org, Feb 23, 2026</div>
+
+  <section>
+    <h2>Side by side</h2>
+    <div class="table-wrap">
+      <table>
+        <caption>How each approach handles a private order-matching round</caption>
+        <thead>
+          <tr>
+            <th></th>
+            <th>MPC</th>
+            <th>FHE</th>
+            <th class="col-tee">TEE <span class="badge">Winner</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>How it works</th>
+            <td>Several non-colluding parties jointly compute the match. No single party ever sees an order alone.</td>
+            <td>Orders stay encrypted the entire time. The matcher computes directly on ciphertext.</td>
+            <td class="col-tee">Real hardware (Intel SGX/TDX, AMD SEV‑SNP) runs the matcher in a sealed, isolated chip. A signed proof ("attestation") shows it ran unmodified.</td>
+          </tr>
+          <tr>
+            <th>Speed, measured</th>
+            <td class="num">50v50 orders: <b>~30 sec</b><br>100 orders: <b>~100 sec</b><br>1,200 orders: <b>~600 sec</b></td>
+            <td class="num">10v10 orders: <b>~204 min</b><br>(over 3 hours)</td>
+            <td class="col-tee num"><b>Native speed</b> — no meaningful overhead vs. a normal server</td>
+          </tr>
+          <tr>
+            <th>Scales to</th>
+            <td>Grows <b>linearly</b> with participants — fine for a small known group, not a public exchange.</td>
+            <td>Doesn't, in practice — "orders of magnitude too slow" at any real scale.</td>
+            <td class="col-tee">Scales with hardware, not with cryptography — <b>no inherent ceiling</b>.</td>
+          </tr>
+          <tr>
+            <th>You must trust</th>
+            <td>That enough of the computing parties are honest and don't collude.</td>
+            <td>That the parties holding the decryption‑key shares don't collude.</td>
+            <td class="col-tee">The chip vendor (Intel/AMD) and the attestation chain — <b>a hardware trust</b>, not a social one.</td>
+          </tr>
+          <tr>
+            <th>Strong point</th>
+            <td>Real cryptographic guarantees. Zero hardware trust.</td>
+            <td>No party — not even the operator — ever sees plaintext, even mid‑computation.</td>
+            <td class="col-tee">Speed <b>and</b> privacy together, with a deployment story close to normal software.</td>
+          </tr>
+          <tr>
+            <th>Weak point</th>
+            <td>Needs multiple non‑colluding operators; falls over past a few hundred participants.</td>
+            <td>"A significant breakthrough is required" before this is usable.</td>
+            <td class="col-tee">Side‑channel attacks are still active research; the operator can still go offline or refuse service.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>The post's own verdict, per approach</h2>
+    <div class="verdict-grid">
+      <div class="vcard">
+        <h3>MPC</h3>
+        <p>"Viable for limited‑participation systems or exchanges with natural trading windows."</p>
+      </div>
+      <div class="vcard">
+        <h3>FHE</h3>
+        <p>"Not viable for high‑performance trading… orders of magnitude too slow for practical use."</p>
+      </div>
+      <div class="vcard win">
+        <h3>TEE</h3>
+        <p>"The pragmatic choice for production systems today… the best option for most use cases."</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The overall call</h2>
+    <blockquote>"TEEs: the pragmatic winner. The tradeoff is trusting the hardware platform — combining TEEs with onchain settlement and ZK proofs can provide defense in depth."</blockquote>
+    <div class="attrib">— closing assessment of the post</div>
+  </section>
+
+  <footer>
+    Numbers and quotes condensed from the source post for reference. Copy this table into your own doc as needed —
+    original context and full nuance live at the source link above.
+  </footer>
+</div>
