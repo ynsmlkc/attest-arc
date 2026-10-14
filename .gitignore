@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+contracts/out/
+contracts/cache/
+contracts/broadcast/*/31337/
+!engine/dist/
+engine/dist/*
+!engine/dist/engine.mjs
+engine/docker-compose.yml.b64

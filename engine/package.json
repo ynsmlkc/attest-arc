@@ -1,0 +1,20 @@
+{
+  "name": "attest-arc-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Matching engine that runs inside a Phala Cloud TDX CVM. Derives its own Arc (EVM) key from dstack's enclave-bound key derivation (dstack.js), registers itself with AttestationVerifier using a quote whose REPORT_DATA binds that key, and settles matched orders on SettlementVault.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test matcher.test.cjs",
+    "bundle": "esbuild index.js --bundle --platform=node --target=node22 --minify --legal-comments=none --outfile=dist/engine.mjs --format=esm"
+  },
+  "dependencies": {
+    "@noble/curves": "^1.8.1",
+    "viem": "2.46.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10"
+  }
+}
