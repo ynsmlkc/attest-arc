@@ -1,0 +1,17 @@
+{
+  "chainId": 5042,
+  "attestationVerifier": "0xf07a39f310aC8617F428d6991749c8eF78725F2F",
+  "settlementVault": "0x64995506ca26BB0c004d2645F32A8abc8Fc7B1d6",
+  "enclaveId": "0x5cf5be8156cf176b73375110cf90b7ec691b0bab000000000000000000000000",
+  "engine": "0x79b75a479825a55232544916925C7f74bAcc71e6",
+  "engineUrl": "https://5cf5be8156cf176b73375110cf90b7ec691b0bab-80.dstack-pha-prod5.phala.network",
+  "phalaAppId": "5cf5be8156cf176b73375110cf90b7ec691b0bab",
+  "mrtd": "0x7fe60787222bd394cb516abca2435f22f035ab2cc9c0a4b4b3b148e46297f3d931a237b72f359052c6e657d8c1409173",
+  "rtmr3": "0xcda4e09fa442d76762494e95296bd5370dbe8f881925196ff6b98a90218a31aa576ca7a91be8608274ed9232d6ed974f",
+  "attestationKey": { "x": "0xd4aea0ab2a5cfdc479e2b02599d8e30d7dcbcc11bc550681a15d0777d2988674", "y": "0x65adda0877a31bf4a80dd227d0b1c53f263afe5136081698ff89101622c5616f" },
+  "txs": {
+    "deployVerifier": "0xd2af5a85bbf4f5db684a4b00b8c0bc22015e41db19b2ba262d46c1a6824f8d44",
+    "deployVault": "0xb247f897b1e993edf547b9a134b5888b738b82d570cee38417b50727ea27a25e",
+    "registerVerifiedEnclave": "0x6e6a4810026ccb85095fc9d15cd44e9d4c2103cd4ff8947b8a454965f5ba959c"
+  }
+}

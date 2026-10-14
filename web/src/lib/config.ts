@@ -1,6 +1,6 @@
 import { defineChain } from "viem";
 
-// Arc mainnet. Every deployment value can be overridden per environment with
+// Arc mainnet (deployments/arc-mainnet.json). Every deployment value can be overridden per environment with
 // VITE_* variables (see web/.env.example), e.g. to point a dev server at a
 // local anvil chain and a dev engine.
 export const CHAIN_ID = Number(import.meta.env.VITE_CHAIN_ID ?? 5042);
@@ -18,12 +18,13 @@ export const arc = defineChain({
 
 /** SettlementVault: settle() only accepts the engine the verifier registered. */
 export const SETTLEMENT_VAULT_ID = (import.meta.env.VITE_VAULT_ID ??
-  "0x0000000000000000000000000000000000000000") as `0x${string}`;
+  "0x64995506ca26BB0c004d2645F32A8abc8Fc7B1d6") as `0x${string}`;
 /** AttestationVerifier: pinned to the engine CVM's MRTD, RTMR3 and attestation key. */
 export const ATTESTATION_VERIFIER_ID = (import.meta.env.VITE_VERIFIER_ID ??
-  "0x0000000000000000000000000000000000000000") as `0x${string}`;
+  "0xf07a39f310aC8617F428d6991749c8eF78725F2F") as `0x${string}`;
+// The Phala app id of the engine CVM, left-aligned in 32 bytes.
 export const MATCHING_ENGINE_ENCLAVE_ID = (import.meta.env.VITE_ENCLAVE_ID ??
-  "0x0000000000000000000000000000000000000000000000000000000000000000") as `0x${string}`;
+  "0x5cf5be8156cf176b73375110cf90b7ec691b0bab000000000000000000000000") as `0x${string}`;
 /** The address the engine derives inside the TDX enclave (dstack GetKey). */
 export const MATCHING_ENGINE_ENGINE_ADDRESS = (import.meta.env.VITE_ENGINE_ADDRESS ??
   "0x79b75a479825a55232544916925C7f74bAcc71e6") as `0x${string}`;

@@ -13,6 +13,31 @@ This is a port of [Attest](https://github.com/ynsmlkc/attest) (built on Stellar
 Soroban) to Arc. Same verification logic and byte offsets; one gap closed that
 the Soroban version could not close (see *Registration binding*).
 
+## Live on Arc mainnet
+
+| | |
+|---|---|
+| App | https://ynsmlkc.github.io/attest-arc/ |
+| AttestationVerifier | [`0xf07a39f310aC8617F428d6991749c8eF78725F2F`](https://explorer.arc.io/address/0xf07a39f310aC8617F428d6991749c8eF78725F2F) |
+| SettlementVault | [`0x64995506ca26BB0c004d2645F32A8abc8Fc7B1d6`](https://explorer.arc.io/address/0x64995506ca26BB0c004d2645F32A8abc8Fc7B1d6) |
+| Engine (key derived in the enclave) | [`0x79b75a479825a55232544916925C7f74bAcc71e6`](https://explorer.arc.io/address/0x79b75a479825a55232544916925C7f74bAcc71e6) |
+| Engine CVM | Phala Cloud, Intel TDX, app `5cf5be8156cf176b73375110cf90b7ec691b0bab` |
+
+What happened on mainnet (all transactions on [explorer.arc.io](https://explorer.arc.io)):
+
+1. Verifier deployed pinned to the CVM's own MRTD / RTMR3 / attestation key, read
+   from its quote and cross-checked against Phala's reported `tcb_info` (exact match).
+2. The engine registered itself: it asked the TDX hardware for a quote whose
+   REPORT_DATA binds its address, and submitted it from that address —
+   [`0x6e6a4810…f5ba959c`](https://explorer.arc.io/tx/0x6e6a4810026ccb85095fc9d15cd44e9d4c2103cd4ff8947b8a454965f5ba959c).
+3. Two wallets deposited, signed opposite EIP-712 orders and sent them to the
+   engine; the engine matched them and settled from its enclave key —
+   [`0x9b77fe32…0c9bd01e`](https://explorer.arc.io/tx/0x9b77fe32800a6640d813b0e3b562967eba489e944c35303eccc719890c9bd01e).
+   A tampered copy of an order was refused (HTTP 401) before reaching the chain.
+
+Full record: [`deployments/arc-mainnet.json`](deployments/arc-mainnet.json). Re-run the
+trade with `scripts/demo-trade.mjs`.
+
 ## How it works
 
 ```
@@ -57,6 +82,8 @@ contracts/   Foundry: AttestationVerifier.sol, SettlementVault.sol, tests, deplo
 engine/      matching engine (Node, viem); dev.js runs it locally with synthetic quotes
 web/         trading UI (Vite + React + viem)
 scripts/     e2e-local.mjs: full register → order → settle run on a local anvil chain
+             demo-trade.mjs: the same trade against the live mainnet deployment
+deployments/ addresses, measurements and transactions of the mainnet deployment
 ```
 
 ## Tests
